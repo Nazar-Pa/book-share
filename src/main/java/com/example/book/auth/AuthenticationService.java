@@ -9,6 +9,7 @@ import com.example.book.user.TokenRepository;
 import com.example.book.user.User;
 import com.example.book.user.UserRepository;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -92,6 +93,11 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        var user2 = userRepository.findByEmail(request.getEmail());
+        var pass = passwordEncoder.encode(request.getPassword());
+        System.out.print("useeeeeeeeeer 1 " + pass);
+
+        System.out.print("useeeeeeeeeer " + user2.get().getPassword());
         var auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -102,7 +108,15 @@ public class AuthenticationService {
         var user = ((User)auth.getPrincipal());
         claims.put("fullname", user.fullName());
         var jwtToken = jwtService.generateToken(claims, user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        Cookie cookie = new Cookie("authToken", jwtToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true); // Use HTTPS
+        cookie.setPath("/");
+        cookie.setMaxAge(3600);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .cookie(cookie)
+                .build();
     }
 
     // @Transactional

@@ -2,6 +2,7 @@ package com.example.book.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,8 @@ public class JwtFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+        Cookie[] cookies = request.getCookies();
+            System.out.print("cookieeees " + cookies);
         if(request.getServletPath().contains("/api/v1/auth")) {
             filterChain.doFilter(request, response);
             return;
