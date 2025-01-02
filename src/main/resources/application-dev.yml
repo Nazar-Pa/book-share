@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/bookshop
+    url: jdbc:postgresql://localhost:5432/bookshopwithkeycloak
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver
@@ -28,15 +28,12 @@ spring:
         connectiontimeout: 5000
         timeout: 3000
         writetimeout: 5000
-
-application:
   security:
-    jwt:
-      secret-key: 057bca4043e13ac91cc4d52a88d2da97ad401023aeab59d62d79f6824169275e
-      expiration: 7200000
-  mailing:
-    frontend:
-      activation-url: http://localhost:4200/activate-account
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "http://localhost:9090/realms/book-social-network"
+application:
   file:
     uploads:
       photos-output-path: ./uploads

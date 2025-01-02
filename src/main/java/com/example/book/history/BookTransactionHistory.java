@@ -3,6 +3,7 @@ package com.example.book.history;
 import com.example.book.book.Book;
 import com.example.book.common.BaseEntity;
 import com.example.book.user.User;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -21,9 +22,12 @@ import lombok.experimental.SuperBuilder;
 public class BookTransactionHistory extends BaseEntity {
 
     // user relationship
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    // @ManyToOne
+    // @JoinColumn(name = "user_id")
+    // private User user;
+
+    @Column(name = "user_id")
+    private String userId;
 
     // book relationship
     @ManyToOne
