@@ -32,7 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         Cookie[] cookies = request.getCookies();
-            System.out.print("cookieeees " + cookies);
+            System.out.print(cookies);
         if(request.getServletPath().contains("/api/v1/auth")) {
             filterChain.doFilter(request, response);
             return;

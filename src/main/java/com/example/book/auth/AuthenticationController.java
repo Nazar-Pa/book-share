@@ -2,9 +2,11 @@ package com.example.book.auth;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +32,19 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody @Valid AuthenticationRequest request, HttpServletResponse response
     ) {
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+
+        AuthenticationResponse authResponse = authenticationService.authenticate(request);
+
+        Cookie cookie = new Cookie("session4", authResponse.getToken());
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(3600);
+        response.addCookie(cookie);
+        //response.addHeader("Set-Cookie",
+                //"sessionToken=" + authResponse.getToken() + "; Path=/; HttpOnly; Secure; SameSite=None");
+
+        return ResponseEntity.ok(authResponse);
     }
 
     @GetMapping("/activate-account")

@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -95,9 +96,6 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         var user2 = userRepository.findByEmail(request.getEmail());
         var pass = passwordEncoder.encode(request.getPassword());
-        System.out.print("useeeeeeeeeer 1 " + pass);
-
-        System.out.print("useeeeeeeeeer " + user2.get().getPassword());
         var auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -108,11 +106,13 @@ public class AuthenticationService {
         var user = ((User)auth.getPrincipal());
         claims.put("fullname", user.fullName());
         var jwtToken = jwtService.generateToken(claims, user);
-        Cookie cookie = new Cookie("authToken", jwtToken);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true); // Use HTTPS
+        Cookie cookie = new Cookie("session", jwtToken);
+        cookie.setHttpOnly(false);
+        cookie.setSecure(false); // Use HTTPS
         cookie.setPath("/");
-        cookie.setMaxAge(3600);
+
+        cookie.setDomain("localhost:4200");
+        cookie.setMaxAge(3600); // 1 hour
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .cookie(cookie)
